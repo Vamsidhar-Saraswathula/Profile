@@ -1,10 +1,17 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>
+  (function(){
+    var t = localStorage.getItem('theme');
+    if(!t && window.matchMedia('(prefers-color-scheme: dark)').matches){ t = 'dark'; }
+    if(t){ document.documentElement.setAttribute('data-theme', t); }
+  })();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vamsidhar Saraswathula — Computer Vision Researcher</title>
-<meta name="description" content="Sree Rama Vamsidhar Saraswathula — Computer Vision Researcher at Auric AI Labs. Research on deblurring, super-resolution, and data-constrained learning.">
+<title>Vamsidhar Saraswathula · Computer Vision Researcher</title>
+<meta name="description" content="Vamsidhar Saraswathula · Computer Vision Researcher at Auric AI Labs. Research on deblurring, super-resolution, and data-constrained learning.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -18,8 +25,22 @@
     --signal:#1f7a5c;
     --signal-bright:#2fa87f;
     --navy:#1c2a44;
+    --card:#ffffff;
+    --badge-bg:#1c2a44;
     --radius:2px;
     --maxw:840px;
+  }
+  html[data-theme="dark"]{
+    --paper:#12151a;
+    --paper-dim:#181c22;
+    --ink:#e9e8e3;
+    --slate:#93999f;
+    --line:#2a2f37;
+    --signal:#4fd3a0;
+    --signal-bright:#5be0ac;
+    --navy:#a9c1e8;
+    --card:#181c22;
+    --badge-bg:#2a3a5c;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -31,6 +52,7 @@
     font-size:16px;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    transition:background .25s ease, color .25s ease;
   }
   ::selection{background:var(--signal-bright); color:#fff;}
   a{color:inherit}
@@ -39,7 +61,7 @@
   /* nav */
   header.nav{
     position:sticky; top:0; z-index:50;
-    background:rgba(248,247,244,0.86);
+    background:color-mix(in srgb, var(--paper) 86%, transparent);
     backdrop-filter:blur(8px);
     border-bottom:1px solid var(--line);
   }
@@ -61,6 +83,23 @@
     transition:color .15s ease;
   }
   .nav-links a:hover{color:var(--signal)}
+
+  .theme-toggle{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--card);
+    cursor:pointer;
+    color:var(--slate);
+    margin-left:6px;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .theme-toggle:hover{border-color:var(--signal); color:var(--signal);}
+  .theme-toggle svg{width:15px; height:15px; display:block;}
+  .theme-toggle .icon-moon{display:none;}
+  html[data-theme="dark"] .theme-toggle .icon-sun{display:none;}
+  html[data-theme="dark"] .theme-toggle .icon-moon{display:block;}
 
   /* scan rule — the signature divider */
   .scan-rule{
@@ -109,6 +148,40 @@
   .role a{color:var(--navy); text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:3px;}
   .role a:hover{text-decoration-color:var(--signal);}
 
+  .hero-top{display:flex; gap:24px; align-items:flex-start;}
+  .avatar{
+    flex:none;
+    width:88px; height:88px;
+    border-radius:50%;
+    background:var(--navy);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif;
+    font-size:1.6rem;
+    letter-spacing:.02em;
+    border:2px solid var(--signal-bright);
+    position:relative;
+  }
+  html[data-theme="dark"] .avatar{ color:#0e1116; }
+  .avatar::after{
+    content:"";
+    position:absolute; inset:-6px;
+    border-radius:50%;
+    border:1px dashed var(--line);
+  }
+  .hero-text{min-width:0;}
+
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin:2px 0 22px;}
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:var(--paper-dim);
+    color:var(--slate);
+    border:1px solid var(--line);
+  }
+
   .link-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
   .pill{
     font-family:'IBM Plex Mono', monospace;
@@ -118,7 +191,7 @@
     border-radius:999px;
     text-decoration:none;
     color:var(--ink);
-    background:#fff;
+    background:var(--card);
     transition:border-color .15s ease, color .15s ease, background .15s ease;
   }
   .pill:hover{border-color:var(--signal); color:var(--signal); background:#f2f8f5;}
@@ -152,16 +225,27 @@
   .edu-list .deg{color:var(--ink);}
   .edu-list .inst{color:var(--slate); display:block; font-size:13.5px; margin-top:2px;}
 
-  /* updates */
-  .updates{list-style:none; margin:0; padding:0;}
-  .updates li{
-    display:grid; grid-template-columns:110px 1fr; gap:16px;
-    padding:13px 0; border-bottom:1px dashed var(--line);
-    font-size:14.5px;
-    align-items:baseline;
+  /* updates — timeline */
+  .updates{list-style:none; margin:0; padding:0 0 0 4px; position:relative;}
+  .updates::before{
+    content:"";
+    position:absolute; left:97px; top:6px; bottom:6px; width:1px;
+    background:var(--line);
   }
-  .updates li:first-child{border-top:1px dashed var(--line);}
-  .updates time{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--signal);}
+  .updates li{
+    display:grid; grid-template-columns:86px 20px 1fr; align-items:start;
+    gap:0 14px;
+    padding:14px 0;
+    font-size:14.5px;
+  }
+  .updates time{font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--slate); padding-top:3px;}
+  .updates .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--paper);
+    border:2px solid var(--signal);
+    margin-top:4px;
+    position:relative; z-index:1;
+  }
   .updates a{text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:3px;}
   .updates a:hover{text-decoration-color:var(--signal);}
 
@@ -180,7 +264,7 @@
   .pub-tag{
     font-family:'IBM Plex Mono', monospace;
     font-size:12px; color:#fff;
-    background:var(--navy);
+    background:var(--badge-bg);
     border-radius:var(--radius);
     height:22px; width:36px;
     display:flex; align-items:center; justify-content:center;
@@ -230,14 +314,20 @@
 
 <header class="nav">
   <div class="wrap">
-    <a class="nav-name" href="#top">SREE RAMA VAMSIDHAR S.</a>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#publications">Publications</a></li>
-      <li><a href="#teaching">Teaching</a></li>
-      <li><a href="#students">Students</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
+    <a class="nav-name" href="#top">VAMSIDHAR SARASWATHULA</a>
+    <div style="display:flex; align-items:center; gap:22px;">
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#publications">Publications</a></li>
+        <li><a href="#teaching">Teaching</a></li>
+        <li><a href="#students">Students</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -245,11 +335,23 @@
   <div class="wrap">
 
     <section class="hero">
-      <p class="eyebrow">Computer Vision · Image Processing · Deep Learning</p>
-      <h1 class="name">Sree Rama Vamsidhar<br>Saraswathula</h1>
+      <div class="hero-top">
+        <div class="avatar" aria-hidden="true">VS</div>
+        <div class="hero-text">
+          <p class="eyebrow">Computer Vision · Image Processing · Deep Learning</p>
+          <h1 class="name">Vamsidhar<br>Saraswathula</h1>
+        </div>
+      </div>
       <p class="role">
-        <strong>Computer Vision Researcher</strong> at <a href="https://www.auricai.in/" target="_blank" rel="noopener">Auric AI Labs</a>, Bangalore, India — working on fine‑grained detection of classified objects. Ph.D. in Electrical Engineering, <a href="https://www.iittp.ac.in/" target="_blank" rel="noopener">IIT Tirupati</a>, advised by <a href="https://sites.google.com/view/ramakrishnasaigorthi/" target="_blank" rel="noopener">Prof. Rama Krishna Gorthi</a>.
+        <strong>Computer Vision Researcher</strong> at <a href="https://www.auricai.in/" target="_blank" rel="noopener">Auric AI Labs</a>, Bangalore, India. Ph.D. in Electrical Engineering, <a href="https://www.iittp.ac.in/" target="_blank" rel="noopener">IIT Tirupati</a>, advised by <a href="https://sites.google.com/view/ramakrishnasaigorthi/" target="_blank" rel="noopener">Prof. Rama Krishna Gorthi</a>.
       </p>
+      <div class="tags">
+        <span class="tag">Deblurring</span>
+        <span class="tag">Super-Resolution</span>
+        <span class="tag">Few-Shot Learning</span>
+        <span class="tag">Self-Supervised Learning</span>
+        <span class="tag">Defense CV</span>
+      </div>
       <div class="link-row">
         <a class="pill" href="https://scholar.google.com/citations?view_op=list_works&hl=en&authuser=1&user=4dZitIwAAAAJ&authuser=1" target="_blank" rel="noopener">Google Scholar</a>
         <a class="pill" href="https://linkedin.com/in/contact-vamsidhar-saraswathula" target="_blank" rel="noopener">LinkedIn</a>
@@ -263,20 +365,20 @@
     <section id="about" class="reveal">
       <h2 class="h">About</h2>
       <div class="lede">
-        <p>I'm a Computer Vision Researcher at Auric AI Labs, Bangalore, specializing in data‑constrained learning — few‑shot, zero‑shot, self‑supervised, and unsupervised techniques for building scalable, intelligent visual systems. At Auric AI, I lead fine‑grained detection of classified, defense‑related objects, taken from concept through to MVP, the company's core selling point.</p>
+        <p>I'm a Computer Vision Researcher at Auric AI Labs, Bangalore, specializing in data‑constrained learning: few‑shot, zero‑shot, self‑supervised, and unsupervised techniques for building scalable, intelligent visual systems. At Auric AI, I lead fine‑grained object detection for defense applications, from concept through to MVP.</p>
         <p>My research interests span image processing, computer vision, and deep learning, with particular depth in image deblurring and super‑resolution under limited or absent training data.</p>
       </div>
       <ul class="edu-list">
         <li>
-          <time>2019 – 2026</time>
+          <time>2019 - 2026</time>
           <div><span class="deg">Ph.D., Electrical Engineering</span><span class="inst">IIT Tirupati · ViSAL Lab, advised by Prof. Rama Krishna Gorthi · viva voce completed July 2026</span></div>
         </li>
         <li>
-          <time>2017 – 2019</time>
+          <time>2017 - 2019</time>
           <div><span class="deg">M.Tech., Technology</span><span class="inst">Sri Venkateswara University, Tirupati</span></div>
         </li>
         <li>
-          <time>2011 – 2015</time>
+          <time>2011 - 2015</time>
           <div><span class="deg">B.Tech., Electronics &amp; Communication Engineering</span><span class="inst">Sri Chandrasekharendra Saraswathi Viswa Mahavidyalaya, Kanchipuram</span></div>
         </li>
       </ul>
@@ -287,10 +389,10 @@
     <section id="updates" class="reveal">
       <h2 class="h">Latest updates</h2>
       <ul class="updates">
-        <li><time>NOV 2024</time><span>arXiv preprint — <a href="http://arxiv.org/abs/2407.04815" target="_blank" rel="noopener">D3: Deep Deconvolution Deblurring for Natural Images</a></span></li>
-        <li><time>OCT 2024</time><span>Accepted at CVIP 2024 — Space Varying Motion Blur Degradation Dataset and Model for Semantic Segmentation</span></li>
-        <li><time>JUL 2024</time><span>Accepted at BMVC 2024 — <a href="https://bmvc2024.org/proceedings/414/" target="_blank" rel="noopener">Null‑Shot Super‑resolution Using Deep Identity Learning</a></span></li>
-        <li><time>APR 2024</time><span>Accepted at CVPR Workshop (NTIRE) 2024 — <a href="https://openaccess.thecvf.com/content/CVPR2024W/NTIRE/html/S_ISSR-DIL_Image_Specific_Super_Resolution_Using_Deep_Identity_Learning_CVPRW_2024_paper.html" target="_blank" rel="noopener">ISSR‑DIL: Image Specific Super‑Resolution Using Deep Identity Learning</a></span></li>
+        <li><time>NOV 2024</time><span class="dot"></span><span>arXiv preprint · <a href="http://arxiv.org/abs/2407.04815" target="_blank" rel="noopener">D3: Deep Deconvolution Deblurring for Natural Images</a></span></li>
+        <li><time>OCT 2024</time><span class="dot"></span><span>Accepted at CVIP 2024 · Space Varying Motion Blur Degradation Dataset and Model for Semantic Segmentation</span></li>
+        <li><time>JUL 2024</time><span class="dot"></span><span>Accepted at BMVC 2024 · <a href="https://bmvc2024.org/proceedings/414/" target="_blank" rel="noopener">Null‑Shot Super‑resolution Using Deep Identity Learning</a></span></li>
+        <li><time>APR 2024</time><span class="dot"></span><span>Accepted at CVPR Workshop (NTIRE) 2024 · <a href="https://openaccess.thecvf.com/content/CVPR2024W/NTIRE/html/S_ISSR-DIL_Image_Specific_Super_Resolution_Using_Deep_Identity_Learning_CVPRW_2024_paper.html" target="_blank" rel="noopener">ISSR‑DIL: Image Specific Super‑Resolution Using Deep Identity Learning</a></span></li>
       </ul>
     </section>
 
@@ -305,8 +407,8 @@
         <div class="pub">
           <span class="pub-tag">J1</span>
           <div>
-            <p class="pub-title">VISAL — A Novel Learning Strategy to Address Class Imbalance</p>
-            <p class="pub-meta">S. R. Vamsidhar S., V. Ravi, A. K. Sivapuram, G. Senthil, R. K. Gorthi — Neural Networks, 161, 178–184 (2023). ISSN 0893‑6080</p>
+            <p class="pub-title">VISAL: A Novel Learning Strategy to Address Class Imbalance</p>
+            <p class="pub-meta">S. R. Vamsidhar S., V. Ravi, A. K. Sivapuram, G. Senthil, R. K. Gorthi · Neural Networks, 161, 178-184 (2023). ISSN 0893-6080</p>
             <p class="pub-note">Brings angular and Euclidean margins into standard cross‑entropy learning to widen generalization room for minority‑class samples.</p>
             <div class="pub-links">
               <a href="https://linkinghub.elsevier.com/retrieve/pii/S0893608023000151" target="_blank" rel="noopener">Paper</a>
@@ -320,7 +422,7 @@
           <span class="pub-tag">J2</span>
           <div>
             <p class="pub-title">D3: Deep Deconvolution Deblurring for Natural Images</p>
-            <p class="pub-meta">S. R. Vamsidhar S., R. K. Gorthi — under review</p>
+            <p class="pub-meta">S. R. Vamsidhar S., R. K. Gorthi · under review</p>
             <div class="pub-links">
               <a href="http://arxiv.org/abs/2407.04815" target="_blank" rel="noopener">arXiv</a>
             </div>
@@ -335,7 +437,7 @@
           <span class="pub-tag">C4</span>
           <div>
             <p class="pub-title">Space Varying Motion Blur Degradation Dataset and Model for Semantic Segmentation</p>
-            <p class="pub-meta">B. Reddy, S. R. Vamsidhar S., S. Prabhu, R. K. Gorthi — CVIP 2024</p>
+            <p class="pub-meta">B. Reddy, S. R. Vamsidhar S., S. Prabhu, R. K. Gorthi · CVIP 2024</p>
           </div>
         </div>
 
@@ -343,8 +445,8 @@
           <span class="pub-tag">C3</span>
           <div>
             <p class="pub-title">Null‑Shot Super‑resolution Using Deep Identity Learning</p>
-            <p class="pub-meta">S. R. Vamsidhar S., R. K. Gorthi — BMVC 2024</p>
-            <p class="pub-note">A null‑shot framework for image super‑resolution that is independent of image data — relying on neither a training dataset nor a single low‑resolution input.</p>
+            <p class="pub-meta">S. R. Vamsidhar S., R. K. Gorthi · BMVC 2024</p>
+            <p class="pub-note">A null‑shot framework for image super‑resolution that is independent of image data, relying on neither a training dataset nor a single low‑resolution input.</p>
             <div class="pub-links">
               <a href="https://bmvc2024.org/proceedings/414/" target="_blank" rel="noopener">Paper</a>
               <a href="https://sites.google.com/view/nssr-dil-bmvc2024/home" target="_blank" rel="noopener">Project page</a>
@@ -356,7 +458,7 @@
           <span class="pub-tag">C2</span>
           <div>
             <p class="pub-title">ISSR‑DIL: Image Specific Super‑Resolution Using Deep Identity Learning</p>
-            <p class="pub-meta">S. R. Vamsidhar S., J. D., R. K. Gorthi — CVPR Workshops (NTIRE) 2024</p>
+            <p class="pub-meta">S. R. Vamsidhar S., J. D., R. K. Gorthi · CVPR Workshops (NTIRE) 2024</p>
             <p class="pub-note">A lightweight, zero‑shot super‑resolution model built on Deep Identity Learning, exploiting the identity between degradation and inverse‑degradation models.</p>
             <div class="pub-links">
               <a href="https://drive.google.com/file/d/1UGkID9ztq8u893fG-wmjyVq3SNvFPpUf/view?usp=sharing" target="_blank" rel="noopener">Poster</a>
@@ -370,7 +472,7 @@
           <span class="pub-tag">C1</span>
           <div>
             <p class="pub-title">Effective Label Distribution Aware Margin (E‑LDAM) Loss for COVID‑19 Chest X‑ray Image Classification</p>
-            <p class="pub-meta">S. R. Vamsidhar S., B. Satya, R. K. Gorthi — CVIP 2023 · IAPR Best Paper Award</p>
+            <p class="pub-meta">S. R. Vamsidhar S., B. Satya, R. K. Gorthi · CVIP 2023 · IAPR Best Paper Award</p>
             <p class="pub-note">Modifies the margin of the LDAM loss using an effective number of samples per class to address imbalance in chest X‑ray classification.</p>
             <div class="pub-links">
               <a href="https://link.springer.com/chapter/10.1007/978-3-031-58535-7_16" target="_blank" rel="noopener">Paper</a>
@@ -388,13 +490,13 @@
         <div>
           <h2 class="h">Awards</h2>
           <ul class="plain">
-            <li><span>IAPR Best Paper Award, CVIP 2023 — "Effective‑LDAM"</span></li>
+            <li><span>IAPR Best Paper Award, CVIP 2023: "Effective‑LDAM"</span></li>
           </ul>
         </div>
         <div>
           <h2 class="h">Fellowships</h2>
           <ul class="plain">
-            <li><span>MHRD Government Fellowship</span><span class="dim">2019–2024</span></li>
+            <li><span>MHRD Government Fellowship</span><span class="dim">2019-2024</span></li>
           </ul>
         </div>
       </div>
@@ -403,27 +505,27 @@
     <div class="scan-rule"></div>
 
     <section id="teaching" class="reveal">
-      <h2 class="h">Teaching — IIT Tirupati</h2>
+      <h2 class="h">Teaching, IIT Tirupati</h2>
       <div class="grid-2">
         <div>
           <h3 class="pub-group" style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--navy); margin:0 0 14px;">Courses</h3>
           <ul class="plain">
-            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan–May 2024</span></li>
-            <li><span>Digital Signal Processing</span><span class="dim">Aug–Nov 2023</span></li>
-            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan–May 2023</span></li>
-            <li><span>Advanced DSP Lab</span><span class="dim">Aug–Nov 2022</span></li>
-            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan–Apr 2022</span></li>
-            <li><span>Deep Learning Theory &amp; Applications</span><span class="dim">Jun–Nov 2021</span></li>
-            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan–Feb 2021</span></li>
-            <li><span>Departmental Activities</span><span class="dim">Aug–Nov 2019</span></li>
+            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan-May 2024</span></li>
+            <li><span>Digital Signal Processing</span><span class="dim">Aug-Nov 2023</span></li>
+            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan-May 2023</span></li>
+            <li><span>Advanced DSP Lab</span><span class="dim">Aug-Nov 2022</span></li>
+            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan-Apr 2022</span></li>
+            <li><span>Deep Learning Theory &amp; Applications</span><span class="dim">Jun-Nov 2021</span></li>
+            <li><span>Machine Learning for Image Processing</span><span class="dim">Jan-Feb 2021</span></li>
+            <li><span>Departmental Activities</span><span class="dim">Aug-Nov 2019</span></li>
           </ul>
         </div>
         <div>
           <h3 class="pub-group" style="font-family:'IBM Plex Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--navy); margin:0 0 14px;">Labs</h3>
           <ul class="plain">
-            <li><span>Image Processing Lab</span><span class="dim">Jan–May 2024</span></li>
-            <li><span>Digital Signal Processing</span><span class="dim">Aug–Nov 2023</span></li>
-            <li><span>Advanced DSP Lab</span><span class="dim">Aug–Nov 2022</span></li>
+            <li><span>Image Processing Lab</span><span class="dim">Jan-May 2024</span></li>
+            <li><span>Digital Signal Processing</span><span class="dim">Aug-Nov 2023</span></li>
+            <li><span>Advanced DSP Lab</span><span class="dim">Aug-Nov 2022</span></li>
           </ul>
         </div>
       </div>
@@ -445,22 +547,22 @@
       <div class="grid-2">
         <div>
           <dl class="students">
-            <dt>IIT Tirupati — Masters</dt>
-            <dd>Jayadeep D <span class="role-tag">— May 2022 to Jun 2023</span></dd>
-            <dd>Gaurav Kumar <span class="role-tag">— May 2023 to May 2024</span></dd>
-            <dt>IIT Tirupati — Bachelors</dt>
-            <dd>Deepanshu Gautham <span class="role-tag">— 2020</span></dd>
-            <dd>Ethiraj M V <span class="role-tag">— Jun 2023 to Jun 2024</span></dd>
-            <dd>Sasidhar <span class="role-tag">— since May 2024</span></dd>
+            <dt>IIT Tirupati · Masters</dt>
+            <dd>Jayadeep D <span class="role-tag">· May 2022 to Jun 2023</span></dd>
+            <dd>Gaurav Kumar <span class="role-tag">· May 2023 to May 2024</span></dd>
+            <dt>IIT Tirupati · Bachelors</dt>
+            <dd>Deepanshu Gautham <span class="role-tag">· 2020</span></dd>
+            <dd>Ethiraj M V <span class="role-tag">· Jun 2023 to Jun 2024</span></dd>
+            <dd>Sasidhar <span class="role-tag">· since May 2024</span></dd>
           </dl>
         </div>
         <div>
           <dl class="students">
             <dt>Intern students</dt>
-            <dd>Bhargava Satya N, Andhra University <span class="role-tag">— Chest X‑ray imbalance classification, 2020–2021</span></dd>
-            <dd>Hrishikesh, VIT Vellore <span class="role-tag">— Blur data image segmentation, 2021–2022</span></dd>
-            <dd>Astha, IISER Bhopal <span class="role-tag">— Imbalance in image super‑resolution, 2024</span></dd>
-            <dd>Vishnu, NIT Andhra Pradesh <span class="role-tag">— Blur data image segmentation, 2024</span></dd>
+            <dd>Bhargava Satya N, Andhra University <span class="role-tag">· Chest X‑ray imbalance classification, 2020-2021</span></dd>
+            <dd>Hrishikesh, VIT Vellore <span class="role-tag">· Blur data image segmentation, 2021-2022</span></dd>
+            <dd>Astha, IISER Bhopal <span class="role-tag">· Imbalance in image super‑resolution, 2024</span></dd>
+            <dd>Vishnu, NIT Andhra Pradesh <span class="role-tag">· Blur data image segmentation, 2024</span></dd>
           </dl>
         </div>
       </div>
@@ -471,7 +573,7 @@
   <footer id="contact">
     <div class="wrap">
       <div>
-        <div class="foot-name">Sree Rama Vamsidhar Saraswathula</div>
+        <div class="foot-name">Vamsidhar Saraswathula</div>
         <small>sreeramvds@gmail.com</small>
       </div>
       <div class="link-row">
@@ -484,6 +586,20 @@
 </main>
 
 <script>
+  (function(){
+    const root = document.documentElement;
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if(stored){ root.setAttribute('data-theme', stored); }
+    else if(prefersDark){ root.setAttribute('data-theme', 'dark'); }
+    document.getElementById('themeToggle').addEventListener('click', function(){
+      const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  })();
+
   const els = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
